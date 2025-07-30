@@ -94,24 +94,29 @@ const rebuildLocalState = () => {
     // Get all modules, sections and subsections in display order.
     const courseItems = exporter.allItemsArray(state);
 
+    console.log('rebuildLocalState');
+    console.log(courseItems);
+
     // Build sections array.
     sections = [];
     courseItems.forEach(item => {
         if (item.type === 'section') {
             // Get section info.
             let sectioninfo = {...state.section.get(item.id)};
+            console.log(sectioninfo);
             // Rename subsections for display purposes.
             sectioninfo.title = getTitleOfSection(sectioninfo);
             sections.push(sectioninfo);
         }
     });
-
+    console.log(sections);
     // Get all module names and parameters.
     moduleNames = [...courseEditor.stateManager.state.cm.values()];
 
     // Now we use the new information to rebuild dropdowns and re-apply checkboxes.
     const sectionsUnfiltered = sections;
     sections = filterVisibleSections(sections);
+    console.log(sections);
     updateSelectionAndMoveToDropdowns(sections, sectionsUnfiltered);
     addCheckboxesToDataStructure();
     localStateUpdating = false;
@@ -159,6 +164,10 @@ export const getSelectedModIds = () => {
  *  select/deselect modules in all sections.
  */
 export const setSectionSelection = (value, sectionNumber) => {
+    console.log('maate');
+    console.log(sectionNumber);
+    console.log(sectionBoxes);
+    console.log(value);
     const boxIds = [];
     if (typeof sectionNumber !== 'undefined' && sectionNumber === constants.SECTION_SELECT_DESCRIPTION_VALUE) {
         // Description placeholder has been selected, do nothing.
@@ -188,10 +197,13 @@ export const setSectionSelection = (value, sectionNumber) => {
  * Scan all available checkboxes and add them to the data structure.
  */
 const addCheckboxesToDataStructure = () => {
+    console.log('Hiiiiiiiiiiiiiiiii');
+    console.log(sections);
     sections.forEach(section => {
         sectionBoxes[section.number] = [];
         const moduleIds = section.cmlist;
-
+        console.log('module ids');
+console.log(moduleIds);
         if (moduleIds && moduleIds.length > 0 && moduleIds[0] !== '') {
             const moduleNamesFiltered = moduleNames.filter(modinfo => moduleIds.includes(modinfo.id.toString()));
             moduleNamesFiltered.forEach(modinfo => {
