@@ -83,11 +83,13 @@ const rebuildLocalState = () => {
     localStateUpdating = true;
 
     // First we rebuild our data structures depending on the course editor state.
+    let sectionsOld = [];
     for (const prop of Object.getOwnPropertyNames(sectionBoxes)) {
         delete sectionBoxes[prop];
     }
 
     const courseEditor = getCurrentCourseEditor();
+
     const state = courseEditor.stateManager.state;
     const exporter = courseEditor.getExporter();
 
@@ -96,6 +98,13 @@ const rebuildLocalState = () => {
 
     console.log('rebuildLocalState');
     console.log(courseItems);
+
+// my bullshit
+    sectionsOld = [...courseEditor.stateManager.state.section.values()].sort((a, b) => a.number > b.number ? 1 : -1);
+
+    console.log('Sections Old');
+    console.log(sectionsOld);
+// my bullshit
 
     // Build sections array.
     sections = [];
@@ -109,6 +118,8 @@ const rebuildLocalState = () => {
             sections.push(sectioninfo);
         }
     });
+
+    console.log('Sections');
     console.log(sections);
     // Get all module names and parameters.
     moduleNames = [...courseEditor.stateManager.state.cm.values()];
@@ -116,6 +127,7 @@ const rebuildLocalState = () => {
     // Now we use the new information to rebuild dropdowns and re-apply checkboxes.
     const sectionsUnfiltered = sections;
     sections = filterVisibleSections(sections);
+    console.log('Filtered Sections');
     console.log(sections);
     updateSelectionAndMoveToDropdowns(sections, sectionsUnfiltered);
     addCheckboxesToDataStructure();
@@ -164,10 +176,10 @@ export const getSelectedModIds = () => {
  *  select/deselect modules in all sections.
  */
 export const setSectionSelection = (value, sectionNumber) => {
-    console.log('maate');
-    console.log(sectionNumber);
-    console.log(sectionBoxes);
-    console.log(value);
+    //console.log('maate');
+    //console.log(sectionNumber);
+    //console.log(sectionBoxes);
+    //console.log(value);
     const boxIds = [];
     if (typeof sectionNumber !== 'undefined' && sectionNumber === constants.SECTION_SELECT_DESCRIPTION_VALUE) {
         // Description placeholder has been selected, do nothing.
@@ -197,13 +209,13 @@ export const setSectionSelection = (value, sectionNumber) => {
  * Scan all available checkboxes and add them to the data structure.
  */
 const addCheckboxesToDataStructure = () => {
-    console.log('Hiiiiiiiiiiiiiiiii');
+    console.log('Add checkboxes to data structure');
     console.log(sections);
     sections.forEach(section => {
         sectionBoxes[section.number] = [];
         const moduleIds = section.cmlist;
-        console.log('module ids');
-console.log(moduleIds);
+        console.log('Module IDs');
+        console.log(moduleIds);
         if (moduleIds && moduleIds.length > 0 && moduleIds[0] !== '') {
             const moduleNamesFiltered = moduleNames.filter(modinfo => moduleIds.includes(modinfo.id.toString()));
             moduleNamesFiltered.forEach(modinfo => {
@@ -229,6 +241,7 @@ console.log(moduleIds);
  * @returns {[]} the filtered sections object
  */
 const filterVisibleSections = (sections) => {
+    //console.log(section);
     // Filter all sections with modules which no checkboxes have been created for.
     // This case should only occur in course formats where some sections are hidden.
     return sections.filter(section => section.cmlist.length !== 0)
